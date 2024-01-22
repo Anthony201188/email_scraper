@@ -90,11 +90,12 @@ def find_emails():
 
 
 def scroll():
+    #wait
+    sleep(2)
+
     #find the load more button and click it 
     load_more = driver.find_element(By.XPATH,'//*[@id="dashboard-projects"]/div[6]/button')
     load_more.click()
-
-    sleep(2)
 
     #scroll the page dow1 100px
     driver.execute_script("window.scrollBy(0, 1000);")
@@ -126,13 +127,20 @@ def run_with_counter(counter, *functions):
             func()
         counter -= 1
 
+def filter_dupllicates(data):
+     """ taks a list as an argument and returns a filtered list with unique values only """
+    
+     unique_values = list(set(data))
+     return unique_values
+     
+
 
 def main():
     #Login
     login()
     
     #wait for popup
-    sleep(8)
+    sleep(5)
     
     #close popup
     close_popup()
@@ -141,7 +149,7 @@ def main():
     #find_emails()
 
     #load all
-    run_with_counter(10,scroll)
+    run_with_counter(250,scroll) #<- for reference 10 loops got 129 results and generally there are 15/page and 3745 intotal so 250
 
     #wait
     sleep(2)
@@ -155,8 +163,11 @@ def main():
     #run recursivley x times
     #run_with_counter(3000,find_emails,lambda:sleep(2), scroll)
 
+    #filter data
+    filtered_email_list = filter_dupllicates(email_list)
+
     #export to workbook
-    create_excel_file("output.xls",email_list)
+    create_excel_file("output.xls",filtered_email_list)
 
     # Close the browser window 
     driver.quit()
