@@ -12,16 +12,11 @@ chrome_options = webdriver.ChromeOptions()
 chromedriver_path = '/home/dci-student/Desktop/python/personal/translate-history/chromedriver_linux64'
 chrome_options.binary_location = chromedriver_path  
 
-
 # Create the Chrome WebDriver instance with the specified options
 driver = webdriver.Chrome(options=chrome_options)
 
-
-
 # URL of the website
 url = 'https://www.bark.com/sellers/my-barks/'
-
-
 
 # Initialise the ChromeDriver
 driver = webdriver.Chrome()
@@ -39,10 +34,9 @@ def login():
         sleep(3)
 
         #Navigate to leads page
-        lead_response_element = driver.find_element(By.XPATH, '/html/body/div[6]/div/div/div[3]/div[3]/div/div[2]/div/div[2]/div/p/a')
+        lead_response_element = driver.find_element(By.XPATH,
+        '/html/body/div[6]/div/div/div[3]/div[3]/div/div[2]/div/div[2]/div/p/a')
         lead_response_element.click()
-
-
 
 def close_popup():
        
@@ -83,23 +77,21 @@ def find_emails():
 
 def scroll():
     #find the load more button and click it 
-       
-       pass
+    pass
 
 
+def main():
+    #Login
+    login()
+    
+    #wait for popup
+    sleep(8)
+    
+    #close popup
+    close_popup()
+    
+    #collect emails
+    find_emails()
 
-##### main #####
-
-login()
-
-#wait for popup
-sleep(8)
-
-#close popup
-close_popup()
-
-find_emails()
-
-
-# Close the browser window
-driver.quit()
+    # Close the browser window 
+    driver.quit()
