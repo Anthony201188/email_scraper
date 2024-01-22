@@ -54,20 +54,27 @@ def find_emails():
         #wait
         sleep(2)
 
+        #section not needed when using JavaScript in the for loop as we start at index0
         #get the first email when page loads
         # Extract and print the email or perform other actions as needed
-        email_element = driver.find_element(By.CLASS_NAME,'buyer-email-display')
-        email = email_element.text
-        print(f'Email found: {email}')
+        #email_element = driver.find_element(By.CLASS_NAME,'buyer-email-display')
+        #email = email_element.text
+        #print(f'Email found: {email}')
 
-        email_list.append(email)
-        print(f'email:{email} added to list')
+        #email_list.append(email)
+        #print(f'email:{email} added to list')
 
         # Find and click on elements with the specified class
         elements = driver.find_elements(By.CLASS_NAME,'responses-projects-item') 
 
+        sleep(2)
+
         for element in elements:
-            element.click()
+            try:
+                driver.execute_script("arguments[0].click();", element)
+            
+            except Exception as e:
+                print(f"Error clicking element: {e}")
 
             # Wait for the content to load (you may need to adjust the time)
             sleep(3)
@@ -86,6 +93,14 @@ def scroll():
     #find the load more button and click it 
     load_more = driver.find_element(By.XPATH,'//*[@id="dashboard-projects"]/div[6]/button')
     load_more.click()
+
+    sleep(2)
+
+    #scroll the page dow1 100px
+    driver.execute_script("window.scrollBy(0, 1000);")
+
+
+    
 
 def create_excel_file(file_name, data):
     # Create a new workbook and select the active sheet
@@ -123,16 +138,22 @@ def main():
     close_popup()
     
     #collect emails
-    find_emails()
+    #find_emails()
+
+    #load all
+    run_with_counter(10,scroll)
 
     #wait
     sleep(2)
 
+    #get emails
+    find_emails()
+
     #load more
-    scroll()
+    #scroll()
 
     #run recursivley x times
-    run_with_counter(3000,find_emails,lambda:sleep(2), scroll)
+    #run_with_counter(3000,find_emails,lambda:sleep(2), scroll)
 
     #export to workbook
     create_excel_file("output.xls",email_list)
