@@ -3,6 +3,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from time import sleep
 from credentials import username,password
+import openpyxl
 
 # Configure Chrome options if needed
 chrome_options = webdriver.ChromeOptions()
@@ -20,6 +21,9 @@ url = 'https://www.bark.com/sellers/my-barks/'
 
 # Initialise the ChromeDriver
 driver = webdriver.Chrome()
+
+email_list = []
+
 def login():
         #get the url
         driver.get(url)
@@ -44,6 +48,9 @@ def close_popup():
        popup.click()
 
 def find_emails():
+        
+        global email_list #use global list so each time function runs they are appended and not lost
+        
         #wait
         sleep(2)
 
@@ -71,13 +78,40 @@ def find_emails():
             email = email_element.text
             print(f'Email found: {email}')
 
-            email_list = []
             email_list.append(email)
             print(f'email:{email} added to list')
 
+            print("global email_list:",email_list)
+
+
 def scroll():
     #find the load more button and click it 
-    pass
+    load_more = driver.find_element(By.XPATH,'//*[@id="dashboard-projects"]/div[6]/button')
+    load_more.click()
+
+def create_excel_file(file_name, data):
+    # Create a new workbook and select the active sheet
+    wb = openpyxl.Workbook()
+    sheet = wb.active
+
+    # Insert data into the first column (column A)
+    for email in data:
+        sheet.append([email])
+
+    # Save the workbook to a file
+    wb.save(file_name)
+
+    print("Workbook successfully created")
+
+def run_with_counter(counter, *functions):
+    """ recursivley run a number of function x number of times """
+    while counter > 0:
+        print(f"Running loop {counter}")
+
+        # Call functions passed as arguments
+        for func in functions:
+            func()
+        counter -= 1
 
 
 def main():
@@ -93,5 +127,19 @@ def main():
     #collect emails
     find_emails()
 
+    #wait
+    sleep(2)
+
+    #load more
+    scroll()
+
+    #run recursivley x times
+    run_with_counter(3000,find_emails,lambda:sleep(2), scroll)
+
+    #export to workbook
+    create_excel_file("output.xls",email_list)
+
     # Close the browser window 
     driver.quit()
+
+main()
