@@ -60,7 +60,6 @@ def find_emails():
         email = email_element.text
         print(f'Email found: {email}')
 
-        email_list = []
         email_list.append(email)
         print(f'email:{email} added to list')
 
@@ -81,7 +80,6 @@ def find_emails():
             email_list.append(email)
             print(f'email:{email} added to list')
 
-            print("global email_list:",email_list)
 
 
 def scroll():
