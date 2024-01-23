@@ -79,29 +79,37 @@ def find_emails():
             # Wait for the content to load (you may need to adjust the time)
             sleep(3)
 
-            # Extract
-            email_element = driver.find_element(By.CLASS_NAME, 'buyer-email-display')
-            email = email_element.text
-            print(f'Email found: {email}')
+            try:
+                # Extract
+                email_element = driver.find_element(By.CLASS_NAME, 'buyer-email-display')
+                email = email_element.text
+                print(f'Email found: {email}')
 
-            email_list.append(email)
-            print(f'email:{email} added to list')
+                email_list.append(email)
+                print(f'email:{email} added to list')
 
+            except Exception as e:
+                print(f"Error iin email extraction:{e}")
+
+            
 
 
 def scroll():
     #wait
-    sleep(2)
+    sleep(3)
 
-    #find the load more button and click it 
-    load_more = driver.find_element(By.XPATH,'//*[@id="dashboard-projects"]/div[6]/button')
-    load_more.click()
+    try:
+        #find the load more button and click it 
+        load_more = driver.find_element(By.XPATH,
+        '//*[@id="dashboard-projects"]/div[6]/button')
+        load_more.click()
 
-    #scroll the page dow1 100px
-    driver.execute_script("window.scrollBy(0, 1000);")
-
-
+        #scroll the page dow    1 100px
+        driver.execute_script("window.scrollBy(0, 1000);")
     
+    except Exception as e :
+         print(f"Error in scoll function:{e}")
+
 
 def create_excel_file(file_name, data):
     # Create a new workbook and select the active sheet
@@ -128,11 +136,13 @@ def run_with_counter(counter, *functions):
         counter -= 1
 
 def filter_dupllicates(data):
-     """ taks a list as an argument and returns a filtered list with unique values only """
-    
+     """ takes a list as an argument and 
+     returns a filtered list with unique values only 
+     """
      unique_values = list(set(data))
-     return unique_values
+     print("filtering successfully complete")
      
+     return unique_values
 
 
 def main():
@@ -145,23 +155,15 @@ def main():
     #close popup
     close_popup()
     
-    #collect emails
-    #find_emails()
-
     #load all
-    run_with_counter(250,scroll) #<- for reference 10 loops got 129 results and generally there are 15/page and 3745 intotal so 250
+    run_with_counter(289,scroll) #<- for reference 10 loops got 129 results and generally there are 15/page and 3745 intotal so 250
+                                 # Run (1) yielded 3155 results run @249 and screened some duplicates Run (2)@ 289
 
     #wait
     sleep(2)
 
     #get emails
     find_emails()
-
-    #load more
-    #scroll()
-
-    #run recursivley x times
-    #run_with_counter(3000,find_emails,lambda:sleep(2), scroll)
 
     #filter data
     filtered_email_list = filter_dupllicates(email_list)
